@@ -34,7 +34,7 @@ namespace ShoppingCart
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }

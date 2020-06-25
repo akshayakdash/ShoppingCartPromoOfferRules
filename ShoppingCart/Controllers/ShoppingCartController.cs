@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ShoppingCart.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ShoppingCartController : ControllerBase
     {
         // GET api/values
         [HttpGet]
