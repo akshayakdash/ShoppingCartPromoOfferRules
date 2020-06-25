@@ -1,0 +1,86 @@
+[
+  {
+    "promotionOfferId": "1",
+    "promotionOfferDescription": "3 A's for 130",
+    "promoRule": {
+      "skUs": [ "A" ],
+      "quantity": 3,
+      "isForDifferentItems": false,
+      "promoResult": {
+        "offFixedPrice": 130.0,
+        "offPercentage": 0.0
+      }
+    },
+    "validTill": "2020-07-25T00:00:00+05:30"
+  },
+  {
+    "promotionOfferId": "2",
+    "promotionOfferDescription": "2 B's for 45",
+    "promoRule": {
+      "skUs": [ "B" ],
+      "quantity": 2,
+      "isForDifferentItems": false,
+      "promoResult": {
+        "offFixedPrice": 45.0,
+        "offPercentage": 0.0
+      }
+    },
+    "validTill": "2020-07-05T00:00:00+05:30"
+  },
+  {
+    "promotionOfferId": "3",
+    "promotionOfferDescription": "C + D for 30",
+    "promoRule": {
+      "skUs": [ "C", "D" ],
+      "quantity": 1,
+      "isForDifferentItems": true,
+      "promoResult": {
+        "offFixedPrice": 30.0,
+        "offPercentage": 0.0
+      }
+    },
+    "validTill": "2020-06-27T00:00:00+05:30"
+  },
+  {
+    "promotionOfferId": "4",
+    "promotionOfferDescription": "D for 15% off",
+    "promoRule": {
+      "skUs": [ "D" ],
+      "quantity": 1,
+      "isForDifferentItems": true,
+      "promoResult": {
+        "offFixedPrice": 0.0,
+        "offPercentage": 15.0
+      }
+    },
+    "validTill": "2020-06-30T00:00:00+05:30"
+  },
+  {
+    "promotionOfferId": "5",
+    "promotionOfferDescription": "C + D for 30% off",
+    "promoRule": {
+      "skUs": [ "C", "D" ],
+      "quantity": 3,
+      "isForDifferentItems": true,
+      "promoResult": {
+        "offFixedPrice": 0.0,
+        "offPercentage": 30.0
+      }
+    },
+    "validTill": "2020-06-23T00:00:00+05:30"
+  },
+  {
+    "promotionOfferId": "6",
+    "promotionOfferDescription": "3 C for 50% off",
+    "promoRule": {
+      "skUs": [ "C" ],
+      "quantity": 3,
+      "isForDifferentItems": true,
+      "promoResult": {
+        "offFixedPrice": 0.0,
+        "offPercentage": 50.0
+      }
+    },
+    "validTill": "2020-06-23T00:00:00+05:30"
+  }
+]

@@ -1,0 +1,81 @@
+{
+  "cartId": "229d66c9-4cb5-442b-aa42-4cf719d1d6c8",
+  "cartItems": [
+    {
+      "sku": "A",
+      "unitPrice": 50.0,
+      "quantity": 5,
+      "offerPrice": 0.0,
+      "actualPrice": 250.0,
+      "priceSaved": 250.0,
+      "promoApplied": false,
+      "promoId": null
+    },
+    {
+      "sku": "B",
+      "unitPrice": 30.0,
+      "quantity": 5,
+      "offerPrice": 0.0,
+      "actualPrice": 150.0,
+      "priceSaved": 150.0,
+      "promoApplied": false,
+      "promoId": null
+    },
+    {
+      "sku": "C",
+      "unitPrice": 20.0,
+      "quantity": 1,
+      "offerPrice": 0.0,
+      "actualPrice": 20.0,
+      "priceSaved": 20.0,
+      "promoApplied": false,
+      "promoId": null
+    }
+  ]
+}
+
+  //{
+  //  "cartId": "7c10e9ba-8b00-45f9-8926-bb513955a9e4",
+  //  "cartItems": [
+  //    {
+  //      "sku": "A",
+  //      "unitPrice": 50.0,
+  //      "quantity": 4,
+  //      "offerPrice": 180.0,
+  //      "actualPrice": 200.0,
+  //      "priceSaved": 20.0,
+  //      "promoApplied": true,
+  //      "promoId": "1"
+  //    },
+  //    {
+  //      "sku": "B",
+  //      "unitPrice": 30.0,
+  //      "quantity": 5,
+  //      "offerPrice": 120.0,
+  //      "actualPrice": 150.0,
+  //      "priceSaved": 30.0,
+  //      "promoApplied": true,
+  //      "promoId": "2"
+  //    },
+  //    {
+  //      "sku": "C",
+  //      "unitPrice": 20.0,
+  //      "quantity": 1,
+  //      "offerPrice": 0.0,
+  //      "actualPrice": 20.0,
+  //      "priceSaved": 20.0,
+  //      "promoApplied": true,
+  //      "promoId": "3"
+  //    },
+  //    {
+  //      "sku": "D",
+  //      "unitPrice": 15.0,
+  //      "quantity": 1,
+  //      "offerPrice": 30.0,
+  //      "actualPrice": 15.0,
+  //      "priceSaved": -15.0,
+  //      "promoApplied": true,
+  //      "promoId": "3"
+  //    }
+  //  ]
+  //}
