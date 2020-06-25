@@ -7,7 +7,6 @@
       "quantity": 5,
       "offerPrice": 0.0,
       "actualPrice": 250.0,
-      "priceSaved": 250.0,
       "promoApplied": false,
       "promoId": null
     },
@@ -17,7 +16,6 @@
       "quantity": 5,
       "offerPrice": 0.0,
       "actualPrice": 150.0,
-      "priceSaved": 150.0,
       "promoApplied": false,
       "promoId": null
     },
@@ -27,7 +25,6 @@
       "quantity": 1,
       "offerPrice": 0.0,
       "actualPrice": 20.0,
-      "priceSaved": 20.0,
       "promoApplied": false,
       "promoId": null
     }
@@ -43,8 +40,7 @@
   //      "quantity": 4,
   //      "offerPrice": 180.0,
   //      "actualPrice": 200.0,
-  //      "priceSaved": 20.0,
-  //      "promoApplied": true,
+  //      "promoApplied": false,
   //      "promoId": "1"
   //    },
   //    {
@@ -53,8 +49,7 @@
   //      "quantity": 5,
   //      "offerPrice": 120.0,
   //      "actualPrice": 150.0,
-  //      "priceSaved": 30.0,
-  //      "promoApplied": true,
+  //      "promoApplied": false,
   //      "promoId": "2"
   //    },
   //    {
@@ -63,8 +58,7 @@
   //      "quantity": 1,
   //      "offerPrice": 0.0,
   //      "actualPrice": 20.0,
-  //      "priceSaved": 20.0,
-  //      "promoApplied": true,
+  //      "promoApplied": false,
   //      "promoId": "3"
   //    },
   //    {
@@ -73,7 +67,6 @@
   //      "quantity": 1,
   //      "offerPrice": 30.0,
   //      "actualPrice": 15.0,
-  //      "priceSaved": -15.0,
   //      "promoApplied": true,
   //      "promoId": "3"
   //    }
