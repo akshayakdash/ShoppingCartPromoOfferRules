@@ -32,6 +32,8 @@ namespace ShoppingCart
         /// <returns></returns>
         public IEnumerable<IGrouping<string, CartItemDto>> ApplyPromoRule(List<CartItemDto> orderItems, List<PromoOffer> offers)
         {
+            if (offers.Any(offer => offer.PromoRule.PromoResult.OffFixedPrice < 0) || offers.Any(offer => offer.PromoRule.Quantity < 0))
+                throw new Exception("One or more invalid promo rules present. Can't apply promo to cart items.");
             var promoOffers = offers.Where(promo => promo.ValidTill >= DateTime.Now).ToList();
             foreach (var orderItem in orderItems)
             {

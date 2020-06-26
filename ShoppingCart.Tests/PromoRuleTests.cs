@@ -161,7 +161,7 @@ namespace ShoppingCart.Tests
         }
 
         [Fact]
-        public void Offer_Price_For_Item_With_Valid_Promo_Should_Be_Less_Than_Actual_Price()
+        public void Offer_Price_For_After_Valid_Promo_Applied_To_Ite_Should_Be_Less_Than_Actual_Price()
         {
             var promoRules = new List<PromoOffer> {
                 new PromoOffer
@@ -180,6 +180,75 @@ namespace ShoppingCart.Tests
             var calculatedCartItems = _promoCalculator.CalculateOfferPrice(cartItemGroupedByPromo, promoRules);
 
             Assert.True(calculatedCartItems.First().OfferPrice <= cartItems.First().Quantity * cartItems.First().UnitPrice);
+        }
+
+        [Fact]
+        public void Offer_Price_In_PromoRule_Cannot_Be_Negative()
+        {
+            var promoRules = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddDays(10),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = 3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = -130 } },
+                },
+            };
+
+            var cartItems = new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+            };
+            Action cartItemGroupedByPromo = () => _promoCalculator.ApplyPromoRule(cartItems, promoRules);
+            var exceptionMessage = "One or more invalid promo rules present. Can't apply promo to cart items.";
+
+            var exception = Assert.Throws<Exception>(cartItemGroupedByPromo);
+            Assert.Equal(exception.Message, exceptionMessage);
+        }
+
+        [Fact]
+        public void Promo_Rule_With_Negative_Match_Quantity_Should_Not_Be_Applied_To_CartItem()
+        {
+            var promoRules = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddDays(10),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = -3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = 130 } },
+                },
+            };
+
+            var cartItems = new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+            };
+            Action cartItemGroupedByPromo = () => _promoCalculator.ApplyPromoRule(cartItems, promoRules);
+            var exceptionMessage = "One or more invalid promo rules present. Can't apply promo to cart items.";
+
+            var exception = Assert.Throws<Exception>(cartItemGroupedByPromo);
+            Assert.Equal(exception.Message, exceptionMessage);
+        }
+
+        [Fact]
+        public void Promo_Rule_With_Negative_Match_Quantity_Or_Negative_Offer_Price_Should_Show_Validation_Error_While_Applying_To_CartItems()
+        {
+            var promoRules = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddDays(10),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = -3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = 130 } },
+                },
+            };
+
+            var cartItems = new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+            };
+            Action cartItemGroupedByPromo = () => _promoCalculator.ApplyPromoRule(cartItems, promoRules);
+            var exceptionMessage = "One or more invalid promo rules present. Can't apply promo to cart items.";
+
+            var exception = Assert.Throws<Exception>(cartItemGroupedByPromo);
+            Assert.Equal(exception.Message, exceptionMessage);
         }
 
         [Fact]
