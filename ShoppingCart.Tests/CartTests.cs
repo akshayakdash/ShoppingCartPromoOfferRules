@@ -47,14 +47,29 @@ namespace ShoppingCart.Tests
 
         [Theory]
         [AutoData]
-        public void Add_Item_To_Cart_Increases_Item_Count_CartItems(CartItem cartItem, List<CartItem> cartItems)
+        public void Add_Item_To_Cart_Increases_Item_Count_CartItems(List<CartItem> cartItems)
         {
             var sut = Cart.CreateCart(cartItems);
 
-            sut.AddItemToCart(cartItem);
+            var newCartItem = new CartItem("A", 20M, 4);
+            sut.AddItemToCart(newCartItem);
 
             Assert.NotEmpty(sut.CartItems);
             Assert.Equal(sut.CartItems.Count, cartItems.Count + 1);
+        }
+
+        [Theory]
+        [AutoData]
+        public void Add_Item_To_Cart_With_Negative_Quantity_Throws_Exception(List<CartItem> cartItems)
+        {
+            var sut = Cart.CreateCart(cartItems);
+            var exceptionMessage = "Quantity for cart item can not be less than 1.";
+            var cartItem = new CartItem("A", 20M, -1);
+            // Act
+            var exception = Assert.Throws<Exception>(() => sut.AddItemToCart(cartItem));
+
+            // Assert
+            Assert.Equal(exceptionMessage, exception.Message);
         }
     }
 }

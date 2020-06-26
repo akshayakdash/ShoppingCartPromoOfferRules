@@ -24,6 +24,8 @@ namespace ShoppingCart.Models
 
         public void AddItemToCart(CartItem cartItem)
         {
+            if (cartItem.Quantity < 1)
+                throw new Exception("Quantity for cart item can not be less than 1.");
             this.CartItems.Add(cartItem);
         }
 
@@ -49,5 +51,12 @@ namespace ShoppingCart.Models
         }
         public bool PromoApplied { get; private set; }
         public string PromoId { get; private set; }
+
+        public CartItem(string sku, decimal unitPrice, int quantity)
+        {
+            SKU = sku;
+            UnitPrice = unitPrice;
+            Quantity = quantity;
+        }
     }
 }
