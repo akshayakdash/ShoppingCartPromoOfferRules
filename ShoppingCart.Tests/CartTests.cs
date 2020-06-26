@@ -56,5 +56,19 @@ namespace ShoppingCart.Tests
             Assert.NotEmpty(sut.CartItems);
             Assert.Equal(sut.CartItems.Count, cartItems.Count + 1);
         }
+
+        [Theory]
+        [AutoData]
+        public void Add_Item_To_Cart_With_Negative_Quantity_Throws_Exception(CartItem cartItem, List<CartItem> cartItems)
+        {
+            var sut = Cart.CreateCart(cartItems);
+            var exceptionMessage = "Quantity for cart item can not be less than 1.";
+
+            // Act
+            var exception = Assert.Throws<Exception>(() => sut.AddItemToCart(cartItem));
+
+            // Assert
+            Assert.Equal(exceptionMessage, exception.Message);
+        }
     }
 }

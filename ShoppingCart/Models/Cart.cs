@@ -24,6 +24,8 @@ namespace ShoppingCart.Models
 
         public void AddItemToCart(CartItem cartItem)
         {
+            if (cartItem.Quantity < 1)
+                throw new Exception("Quantity for cart item can not be less than 1.");
             this.CartItems.Add(cartItem);
         }
 
