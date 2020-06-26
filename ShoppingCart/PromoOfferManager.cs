@@ -27,9 +27,10 @@ namespace ShoppingCart
 
         public IEnumerable<IGrouping<string, CartItemDto>> ApplyPromoRule(List<CartItemDto> orderItems, List<PromoOffer> offers)
         {
+            var promoOffers = offers.Where(promo => promo.ValidTill >= DateTime.Now).ToList();
             foreach (var orderItem in orderItems)
             {
-                var prOffer = offers.Where(p => p.PromoRule.SKUs.Contains(orderItem.SKU)).FirstOrDefault();
+                var prOffer = promoOffers.Where(p => p.PromoRule.SKUs.Contains(orderItem.SKU)).FirstOrDefault();
                 if (prOffer != null)
                 {
                     if (prOffer.PromoRule.IsForDifferentItems)
