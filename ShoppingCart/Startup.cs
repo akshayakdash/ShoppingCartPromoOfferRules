@@ -29,6 +29,7 @@ namespace ShoppingCart
             services.AddSingleton<IProductService, ProductService>();
             services.AddSingleton<ICartService, CartService>();
             services.AddSingleton<IPromoRuleService, PromoRuleService>();
+            services.AddSingleton<ICheckoutService, CheckoutService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
