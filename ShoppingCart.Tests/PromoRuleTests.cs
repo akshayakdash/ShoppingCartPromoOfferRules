@@ -325,6 +325,48 @@ namespace ShoppingCart.Tests
             Assert.False(cartItem_SKU_A.PromoApplied);
         }
 
+        [Fact]
+        public void Offer_Price_After_Promo_Applied_Should_Be_Less_Than_Total_Price_Of_All_Items()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+                    new CartItemDto { SKU = "B", Quantity = 3, UnitPrice = 20 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+            var promoOffers = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddMonths(1),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = 3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = 130 } },
+                },
+                 new PromoOffer
+                {
+                    PromotionOfferId = "2",
+                    PromotionOfferDescription = "3 B's for 45",
+                    ValidTill = DateTime.Today.AddMonths(1),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = 3, SKUs = new List<string>{ "B" }, PromoResult = new PromoResult { OffFixedPrice = 45 } },
+                },
+            };
+
+            // act
+            var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
+            var cartItem_SKU_A = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "A");
+
+            // assert
+            Assert.True(cartItemsWithOfferPrice.Sum(p => p.ActualPrice) > cartItemsWithOfferPrice.Sum(p => p.OfferPrice));
+        }
+
         /// <summary>
         /// 3 A's 130
         /// </summary>
