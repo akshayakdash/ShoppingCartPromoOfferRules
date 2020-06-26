@@ -11,18 +11,30 @@ namespace ShoppingCart.Services
     {
         private ICartService _cartService;
         private IPromoRuleService _promoRuleService;
-        private PromoOfferManager _promoCalculator; 
+        private PromoOfferManager _promoCalculator;
+        private IProductService _productService;
 
         public CheckoutService(ICartService cartService,
-            IPromoRuleService promoRuleService)
+            IPromoRuleService promoRuleService,
+            IProductService productService)
         {
             _cartService = cartService;
             _promoRuleService = promoRuleService;
+            _productService = productService;
             _promoCalculator = PromoOfferManager.Instance;
         }
         public CartDto Checkout(CartDto cart)
         {
-            var cartItems = _cartService.GetCartItems();
+            var products = _productService.GetProductsFromStore();
+            var cartItems = cart.CartItems != null && cart.CartItems.Count() > 0 ? cart.CartItems : _cartService.GetCartItems(); // TO DO: This will be the cart.CartItems
+            cartItems.ForEach(item =>
+            {
+                if (!products.Select(p => p.SKU).Contains(item.SKU))
+                {
+                    throw new Exception("Invalid item added to Cart.");
+                }
+                item.UnitPrice = products.First(p => p.SKU == item.SKU).Price;
+            });
             var promoOffers = _promoRuleService.GetPromoRules();
             var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
             var cartDto = new CartDto

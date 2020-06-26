@@ -15,17 +15,20 @@ namespace ShoppingCart.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
-        private readonly IPromoRuleService _promoRuleServices;
+        private readonly IPromoRuleService _promoRuleService;
+        private readonly ICheckoutService _checkoutService;
         private PromoOfferManager _promoCalculator;
 
         public ShoppingCartController(IProductService productService,
             ICartService cartService,
-            IPromoRuleService promoRuleService)
+            IPromoRuleService promoRuleService,
+            ICheckoutService checkoutService)
         {
             _productService = productService;
             _cartService = cartService;
-            _promoRuleServices = promoRuleService;
+            _promoRuleService = promoRuleService;
             _promoCalculator = PromoOfferManager.Instance;
+            _checkoutService = checkoutService;
         }
         [HttpGet]
         public ActionResult<IEnumerable<ProductDto>> Products()
@@ -37,17 +40,37 @@ namespace ShoppingCart.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<PromoOffer>> PromoOffers()
         {
-            var promoRules = _promoRuleServices.GetPromoRules();
+            var promoRules = _promoRuleService.GetPromoRules();
             return promoRules;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<PromoOffer>> ActivePromoOffers()
         {
-            var promoRules = _promoRuleServices.GetPromoRules()
+            var promoRules = _promoRuleService.GetPromoRules()
                 .Where(p => p.ValidTill > DateTime.Today)
                 .ToList();
             return promoRules;
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<CartItemDto>> CartItems()
+        {
+            var cartItems = _cartService.GetCartItems();
+            return cartItems;
+        }
+
+        [HttpGet]
+        public ActionResult<CartDto> CheckOut(CartDto cart)
+        {
+            var defaultCartItems = _cartService.GetCartItems();
+            var cartDto = new CartDto
+            {
+                CartId = Guid.NewGuid().ToString(),
+                CartItems = cart.CartItems != null && cart.CartItems.Count() > 0 ? cart.CartItems : defaultCartItems
+            };
+            var result = _checkoutService.Checkout(cartDto);
+            return result;
         }
     }
 }
