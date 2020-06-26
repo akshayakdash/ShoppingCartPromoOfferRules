@@ -77,6 +77,42 @@ namespace ShoppingCart.Tests
         }
 
         [Fact]
+        public void Expired_Promo_Should_Not_Be_Applied_To_CartItem_For_Matching_SKU_And_Quantity()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+            var promoOffers = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddMonths(-1),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = 3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = 130 } },
+                },
+            };
+            var appliedPromoOffer = promoOffers.First();
+            // act
+            var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
+            var cartItem_SKU_A = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "A");
+
+            // assert
+            Assert.False(cartItem_SKU_A.PromoApplied);
+            Assert.Equal(cartItem_SKU_A.ActualPrice, cartItem_SKU_A.UnitPrice * cartItem_SKU_A.Quantity);
+            Assert.NotEqual(cartItem_SKU_A.OfferPrice, appliedPromoOffer.PromoRule.PromoResult.OffFixedPrice + ((cartItem_SKU_A.Quantity - appliedPromoOffer.PromoRule.Quantity) * cartItem_SKU_A.UnitPrice));
+        }
+
+        [Fact]
         public void Valid_Promo_Should_Be_Applied_To_CartItem()
         {
             var promoRules = new List<PromoOffer> {
