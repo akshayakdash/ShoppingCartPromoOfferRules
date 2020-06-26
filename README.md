@@ -2,13 +2,13 @@
 Developed a basic shopping cart promotion rules using .Net Core 2.2 using TDD approach.
 
 # Usage
-Clone repository and go to directory ShoppingCart
+Clone repository and go to ShoppingCart directory
 
-dotnet run
+- dotnet run
 
 To run tests go to ShoppingCart.Tests directory
 
-dotnet test
+- dotnet test
 
 ![alt tag](https://raw.githubusercontent.com/akshayakdash/ShoppingCartPromoOfferRules/Development/ShoppingCart/demo.png)
 
