@@ -30,6 +30,11 @@ namespace ShoppingCart.Controllers
             _promoCalculator = PromoOfferManager.Instance;
             _checkoutService = checkoutService;
         }
+
+        /// <summary>
+        /// Gets Products from store
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult<IEnumerable<ProductDto>> Products()
         {
@@ -37,6 +42,10 @@ namespace ShoppingCart.Controllers
             return products;
         }
 
+        /// <summary>
+        /// Gets promo offers
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult<IEnumerable<PromoOffer>> PromoOffers()
         {
@@ -44,6 +53,10 @@ namespace ShoppingCart.Controllers
             return promoRules;
         }
 
+        /// <summary>
+        /// Gets active promo offers
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult<IEnumerable<PromoOffer>> ActivePromoOffers()
         {
@@ -53,6 +66,10 @@ namespace ShoppingCart.Controllers
             return promoRules;
         }
 
+        /// <summary>
+        /// Gets default cartitems stored in json file
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult<IEnumerable<CartItemDto>> CartItems()
         {
@@ -60,7 +77,12 @@ namespace ShoppingCart.Controllers
             return cartItems;
         }
 
-        [HttpGet]
+        /// <summary>
+        /// Checkout a cart with valid cart items
+        /// </summary>
+        /// <param name="cart"></param>
+        /// <returns></returns>
+        [HttpPost]
         public ActionResult<CartDto> CheckOut(CartDto cart)
         {
             var defaultCartItems = _cartService.GetCartItems();
