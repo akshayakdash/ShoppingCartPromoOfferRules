@@ -40,5 +40,14 @@ namespace ShoppingCart.Controllers
             var promoRules = _promoRuleServices.GetPromoRules();
             return promoRules;
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<PromoOffer>> ActivePromoOffers()
+        {
+            var promoRules = _promoRuleServices.GetPromoRules()
+                .Where(p => p.ValidTill > DateTime.Today)
+                .ToList();
+            return promoRules;
+        }
     }
 }
