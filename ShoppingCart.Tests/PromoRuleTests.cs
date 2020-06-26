@@ -219,5 +219,131 @@ namespace ShoppingCart.Tests
             Assert.Equal(cartItem_SKU_A.ActualPrice, cartItem_SKU_A.UnitPrice * cartItem_SKU_A.Quantity);
             Assert.False(cartItem_SKU_A.PromoApplied);
         }
+
+        /// <summary>
+        /// 3 A's 130
+        /// </summary>
+        [Fact]
+        public void Promo_Should_Be_Applied_To_CartItem_For_Matching_SKU_And_Quantity()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+            var promoOffers = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddMonths(1),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = 3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = 130 } },
+                },
+
+            };
+
+            // act
+            var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
+            var cartItem_SKU_A = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "A");
+
+            // assert
+            Assert.NotEqual(cartItem_SKU_A.OfferPrice, cartItem_SKU_A.UnitPrice * cartItem_SKU_A.Quantity);
+            Assert.Equal(cartItem_SKU_A.OfferPrice, promoOffers.First().PromoRule.PromoResult.OffFixedPrice);
+            Assert.True(cartItem_SKU_A.PromoApplied);
+        }
+
+        /// <summary>
+        /// C & D for 30
+        /// </summary>
+        [Fact]
+        public void Promo_Should_Be_Applied_To_CartItem_For_Matching_Different_Combined_SKUs_And_Quantity()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+                    new Dtos.ProductDto{ SKU = "C", Price = 20 },
+                    new Dtos.ProductDto{ SKU = "D", Price = 15 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+                    new CartItemDto { SKU = "C", Quantity = 1, UnitPrice = 20 },
+                    new CartItemDto { SKU = "D", Quantity = 1, UnitPrice = 15 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+            var promoOffers = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "3",
+                    PromotionOfferDescription = "C + D for 30",
+                    ValidTill = DateTime.Today.AddDays(2),
+                    PromoRule = new PromoRule{ IsForDifferentItems=true, Quantity = 1, SKUs = new List<string>{ "C", "D" }, PromoResult = new PromoResult{ OffFixedPrice = 30} }
+                },
+            };
+            var appliedPromoOffer = promoOffers.First();
+            // act
+            var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
+            var cartItem_SKU_C = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "C");
+            var cartItem_SKU_D = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "D");
+
+            // assert
+            Assert.True(cartItem_SKU_C.PromoApplied);
+            Assert.True(cartItem_SKU_D.PromoApplied);
+            Assert.NotEqual((cartItem_SKU_C.UnitPrice * cartItem_SKU_C.Quantity), cartItem_SKU_C.OfferPrice);
+            Assert.NotEqual((cartItem_SKU_D.UnitPrice * cartItem_SKU_D.Quantity), cartItem_SKU_D.OfferPrice);
+            Assert.Equal(cartItem_SKU_C.OfferPrice + cartItem_SKU_D.OfferPrice, appliedPromoOffer.PromoRule.PromoResult.OffFixedPrice);
+        }
+
+        /// <summary>
+        /// 3 A's 130
+        ///        3A + A  + A
+        /// 5 A = 130 + 50 + 50
+        /// </summary>
+        [Fact]
+        public void Promo_Should_Be_Applied_To_CartItem_For_Matching_SKU_And_Quantity_And_Promo_Not_Calculated_For_Remaining_Quantity()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 3, UnitPrice = 50 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+            var promoOffers = new List<PromoOffer> {
+                new PromoOffer
+                {
+                    PromotionOfferId = "1",
+                    PromotionOfferDescription = "3 A's for 130",
+                    ValidTill = DateTime.Today.AddMonths(1),
+                    PromoRule = new PromoRule { IsForDifferentItems = false, Quantity = 3, SKUs = new List<string>{ "A" }, PromoResult = new PromoResult { OffFixedPrice = 130 } },
+                },
+            };
+            var appliedPromoOffer = promoOffers.First();
+            // act
+            var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
+            var cartItem_SKU_A = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "A");
+
+            // assert
+            Assert.NotEqual(cartItem_SKU_A.OfferPrice, cartItem_SKU_A.UnitPrice * cartItem_SKU_A.Quantity);
+            Assert.Equal(cartItem_SKU_A.OfferPrice, appliedPromoOffer.PromoRule.PromoResult.OffFixedPrice + ((cartItem_SKU_A.Quantity - appliedPromoOffer.PromoRule.Quantity) * cartItem_SKU_A.UnitPrice));
+        }
     }
 }
