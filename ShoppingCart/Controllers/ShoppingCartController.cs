@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingCart.Dtos;
+using ShoppingCart.Models;
+using ShoppingCart.Services;
 
 namespace ShoppingCart.Controllers
 {
@@ -10,36 +13,32 @@ namespace ShoppingCart.Controllers
     [ApiController]
     public class ShoppingCartController : ControllerBase
     {
-        // GET api/values
+        private readonly IProductService _productService;
+        private readonly ICartService _cartService;
+        private readonly IPromoRuleService _promoRuleServices;
+        private PromoOfferManager _promoCalculator;
+
+        public ShoppingCartController(IProductService productService,
+            ICartService cartService,
+            IPromoRuleService promoRuleService)
+        {
+            _productService = productService;
+            _cartService = cartService;
+            _promoRuleServices = promoRuleService;
+            _promoCalculator = PromoOfferManager.Instance;
+        }
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<ProductDto>> Products()
         {
-            return new string[] { "value1", "value2" };
+            var products = _productService.GetProductsFromStore();
+            return products;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpGet]
+        public ActionResult<IEnumerable<PromoOffer>> PromoOffers()
         {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var promoRules = _promoRuleServices.GetPromoRules();
+            return promoRules;
         }
     }
 }
