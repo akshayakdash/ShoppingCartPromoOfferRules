@@ -1,5 +1,7 @@
-﻿using ShoppingCart.Dtos;
+﻿using Moq;
+using ShoppingCart.Dtos;
 using ShoppingCart.Models;
+using ShoppingCart.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,16 @@ namespace ShoppingCart.Tests
     public class PromoRuleTests
     {
         private PromoOfferManager _promoCalculator;
+        private Mock<IProductService> _mockProductService;
+        private Mock<ICartService> _mockCartService;
+        private Mock<IPromoRuleService> _mockPromoRuleService;
 
         public PromoRuleTests()
         {
             _promoCalculator = PromoOfferManager.Instance;
+            _mockProductService = new Mock<IProductService>();
+            _mockCartService = new Mock<ICartService>();
+            _mockPromoRuleService = new Mock<IPromoRuleService>();
         }
 
         [Fact]
@@ -158,6 +166,58 @@ namespace ShoppingCart.Tests
             var calculatedCartItems = _promoCalculator.CalculateOfferPrice(cartItemGroupedByPromo, promoRules);
 
             Assert.False(calculatedCartItems.First().OfferPrice < 0);
+        }
+
+        [Fact]
+        public void Price_Of_CarItem_With_SKU_Should_Be_Equal_With_Product_UnitPrice()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 4, UnitPrice = 50 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+
+            // act
+            var cartItemPriceForSKU_A = cartItems.FirstOrDefault(p => p.SKU == "A").UnitPrice;
+            var productPriceSKU_A = products.FirstOrDefault(p => p.SKU == "A").Price;
+
+            // assert
+            Assert.Equal(cartItemPriceForSKU_A, productPriceSKU_A);
+        }
+
+        [Fact]
+        public void Total_Price_Of_CarItem_Calculated_As_UnitPrice_Multiplied_By_Quantity_If_No_Promo_Offer_Available()
+        {
+            // arrange
+            _mockProductService.Setup(method => method.GetProductsFromStore())
+               .Returns(new List<ProductDto> {
+                    new Dtos.ProductDto{ SKU = "A", Price = 50 },
+                    new Dtos.ProductDto{ SKU = "B", Price = 30 },
+               });
+            var products = _mockProductService.Object.GetProductsFromStore();
+
+            _mockCartService.Setup(method => method.GetCartItems())
+               .Returns(new List<Dtos.CartItemDto> {
+                    new CartItemDto { SKU = "A", Quantity = 4, UnitPrice = 50 },
+               });
+            var cartItems = _mockCartService.Object.GetCartItems();
+            var promoOffers = new List<PromoOffer>();
+
+            // act
+            var cartItemsWithOfferPrice = _promoCalculator.CalculateOfferPrice(_promoCalculator.ApplyPromoRule(cartItems, promoOffers), promoOffers);
+            var cartItem_SKU_A = cartItemsWithOfferPrice.FirstOrDefault(p => p.SKU == "A");
+
+            // assert
+            Assert.Equal(cartItem_SKU_A.ActualPrice, cartItem_SKU_A.UnitPrice * cartItem_SKU_A.Quantity);
+            Assert.False(cartItem_SKU_A.PromoApplied);
         }
     }
 }
