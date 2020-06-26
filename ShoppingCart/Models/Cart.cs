@@ -51,5 +51,12 @@ namespace ShoppingCart.Models
         }
         public bool PromoApplied { get; private set; }
         public string PromoId { get; private set; }
+
+        public CartItem(string sku, decimal unitPrice, int quantity)
+        {
+            SKU = sku;
+            UnitPrice = unitPrice;
+            Quantity = quantity;
+        }
     }
 }
